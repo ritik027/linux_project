@@ -1,10 +1,13 @@
 #include<stdio.h>
 #include<stdbool.h>
+#include<math.h>
 
 int no_of_processes;
 int no_of_processes_executed = 0;
 int queue_size = 0;
 int total_time = 0;
+double average_waiting_time = 0;
+double average_turnaround_time = 0;
 
 struct Process
 {
@@ -61,17 +64,20 @@ void heapifyDown(struct Process queue[])
 		right_child = 2 * index + 2;
 	}
 }
-
+void print1(struct Process item);
 void pop(struct Process queue[])
 {
 	struct Process item = queue[0];
 	item.waiting_time = total_time - item.arrival_time;
 	item.turnaround_time = item.waiting_time + item.burst_time;
+	average_waiting_time += item.waiting_time;
+	average_turnaround_time += item.turnaround_time;
+	print1(item);
 	total_time = total_time + item.burst_time + 2;
 	queue[0] = queue[queue_size - 1];
 	queue_size--;
 	heapifyDown(queue);
-	queue[queue_size] = item;
+	//queue[queue_size] = item;
 }
 
 void push(struct Process queue[], struct Process item)
@@ -118,23 +124,76 @@ void input(struct Process all_processes[])
 		scanf("%d",&all_processes[i].arrival_time);
 		if(all_processes[i].arrival_time <= 0)
 		{
-			printf("Arrival time cant be 0 or less than 0\nplease enter again");
+			printf("Arrival time cannot be 0 or less than 0\nplease enter again\n");
 			i--;
 			continue;
 		}
 		printf("Enter Burst time for Process %d\n", (i + 1));
 		scanf("%d",&all_processes[i].burst_time);
 		all_processes[i].process_id = i + 1;
+		all_processes[i].waiting_time = -1;
+		all_processes[i].turnaround_time = -1;
 	}
+}
+
+int calculateNoOfDigits(int num)
+{
+	int digits = 0;
+	if(num <= 0)
+		return 1;
+	
+	while(num > 0)
+	{
+		digits += 1;
+		num /= 10;
+	}
+	return digits;
+}
+
+void print1(struct Process item)
+{
+		printf("         P%d",item.process_id);
+		for(int j = 0; j < (12 - calculateNoOfDigits(item.process_id)); j++)
+		{
+			printf(" ");
+		}
+		printf("%d", item.arrival_time);
+		for(int j = 0; j < (16 - calculateNoOfDigits(item.arrival_time)); j++)
+		{
+			printf(" ");
+		}
+		printf("%d",item.burst_time);
+		for(int j = 0; j < (19 - calculateNoOfDigits(item.burst_time)); j++)
+		{
+			printf(" ");
+		}
+		if(item.waiting_time != -1)
+		printf("%d", item.waiting_time);
+		else
+		printf("-");
+		
+		for(int j = 0;j < (19 - calculateNoOfDigits(item.waiting_time)); j++)
+		{
+			printf(" ");
+		}
+		if(item.turnaround_time != -1)
+		printf("%d\n", item.turnaround_time);
+		else
+		printf("-\n");
 }
 
 void print(struct Process all_processes[])
 {
+	printf("\n\n----------------Process in the order of their arrival time-------------------\n\n");
+	printf("      Process     Arrival Time      Burst Time       Waiting Time       Turnaround Time\n");
 	for(int i = 0; i < no_of_processes; i++)
 	{
-		printf("pid - %d      AT - %d   BT - %d\n", all_processes[i].process_id, all_processes[i].arrival_time, all_processes[i].burst_time);
+		print1(all_processes[i]);
 	}
+	printf("\n\n----------------Process in the order of their execution---------------------\n\n");
+	printf("      Process     Arrival Time      Burst Time       Waiting Time       Turnaround Time\n");
 }
+
 
 int main()
 {
@@ -166,15 +225,8 @@ int main()
 			total_time++;
 		}
 	}
-	double average_waiting_time = 0;
-	double average_turnaround_time = 0;
-	for(int i = no_of_processes - 1; i >= 0; i--)
-	{
-		printf("pid- %d  Arr time- %d  Wt- %d TT- %d\n", queue[i].process_id, queue[i].arrival_time,queue[i].waiting_time,queue[i].turnaround_time);
-		average_waiting_time += queue[i].waiting_time;
-		average_turnaround_time += queue[i].turnaround_time;
-	}
-	average_turnaround_time /= no_of_processes;
-	average_waiting_time /= no_of_processes;
-	printf("average waiting time- %f\naverage turnaround time- %f\ntotal time- %d", average_waiting_time, average_turnaround_time, total_time);
+	
+	printf("\n\nAverage Waiting Time is %.2f", (average_waiting_time/no_of_processes));
+	printf("\n\nAverage Turnaround Time is %.2f", (average_turnaround_time/no_of_processes));
+	printf("\n\nTotal Time taken by processor is %d\n\n", total_time);
 }

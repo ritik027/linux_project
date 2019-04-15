@@ -4,26 +4,43 @@
 #include<time.h>
 
 #define CYLINDERS 5000
+
 int no_of_requests;
 int current_head;
 
-void generate_requests(int queue[])
+void generate_requests(int queue[], int current_head)
 {
 	srand(time(0));
 
 	for(int i = 0; i < no_of_requests; i++)
 	{
 		queue[i] = rand() % 5000;
+		if(queue[i] == current_head)
+		{
+			queue[i] = rand() % 5000;
+		}
 	}
+}
+
+void input_queue(int queue[])
+{
+	for(int i = 0; i < no_of_requests; i++)
+	{
+		printf("Enter Request No %d\n", (i + 1));
+		scanf("%d",&queue[i]);
+	}
+
 }
 
 void print_queue(int queue[])
 {
 
+	printf("\n-----------------The queue of pending requests----------------------\n\n        ");
 	for(int i = 0; i < no_of_requests; i++)
 	{
 		printf("%d ", queue[i]);
 	}
+	printf("\n\n");
 }
 
 int calculate_total_distance(int queue[])
@@ -42,8 +59,19 @@ int main()
 	scanf("%d", &no_of_requests);
 	printf("Enter current head value\n");
 	scanf("%d", &current_head);
+	printf("Enter 1 if you want to give pending requests to queue and 2 if you want to give randomized request\n");
 	int queue[no_of_requests];
-	generate_requests(queue);
+	int ch;
+	scanf("%d", &ch);
+	switch(ch)
+	{
+		case 1:
+		input_queue(queue);
+		break;
+		case 2:
+		generate_requests(queue, current_head);
+		break;
+	}
 	print_queue(queue);
-	printf("total distance moved by disk arm is %d\n",calculate_total_distance(queue));
+	printf("Total Distance moved by Disk Arm is %d\n",calculate_total_distance(queue));
 }
