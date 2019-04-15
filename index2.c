@@ -3,9 +3,8 @@
 #include<stdlib.h>
 #include<time.h>
 
-#define CYLINDERS 5000
-
 int no_of_requests;
+int no_of_cylinders;
 int current_head;
 
 void generate_requests(int queue[], int current_head)
@@ -14,10 +13,10 @@ void generate_requests(int queue[], int current_head)
 
 	for(int i = 0; i < no_of_requests; i++)
 	{
-		queue[i] = rand() % 5000;
+		queue[i] = rand() % no_of_cylinders;
 		if(queue[i] == current_head)
 		{
-			queue[i] = rand() % 5000;
+			queue[i] = rand() % no_of_cylinders;
 		}
 	}
 }
@@ -55,7 +54,9 @@ int calculate_total_distance(int queue[])
 
 int main()
 {
-	printf("Enter no cylinders requests you want in queue\n");
+	printf("Enter no of cylinders you want in a Hard Disk Drive\n");
+	scanf("%d", &no_of_cylinders);
+	printf("Enter no of cylinders requests you want in queue\n");
 	scanf("%d", &no_of_requests);
 	printf("Enter current head value\n");
 	scanf("%d", &current_head);
