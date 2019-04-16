@@ -27,8 +27,13 @@ void input_queue(int queue[])
 	{
 		printf("Enter Request No %d\n", (i + 1));
 		scanf("%d",&queue[i]);
+		if(queue[i] < 0)
+		{
+			printf("Request cant be less than 0. Please enter again\n");
+			i--;
+			continue;
+		}
 	}
-
 }
 
 void print_queue(int queue[])
@@ -74,5 +79,5 @@ int main()
 		break;
 	}
 	print_queue(queue);
-	printf("Total Distance moved by Disk Arm is %d\n",calculate_total_distance(queue));
+	printf("Total Distance moved by Disk Arm is when FCFS disk scheduling algorithm followed is%d\n",calculate_total_distance(queue));
 }
